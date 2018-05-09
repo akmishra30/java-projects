@@ -1,4 +1,4 @@
-package com.makhir.java.designpatterns.creational.singleton;
+package com.makhir.java.patterns.creational.singleton;
 
 public class ThreadSafeApproach {
 	private static ThreadSafeApproach instance;
