@@ -11,11 +11,11 @@ This is sample project with springboot v2.0.5.RELEASE to explore latest spring b
 
 ``mvn clean build install``
 
-**Run **
+**Run**
 
 ``mvn spring-boot:run``
 
-** Application Endpoint **
+**Application Endpoint**
 
 ``http://localhost:9090/makhir/api/greeting``
 
