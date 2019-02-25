@@ -1,0 +1,28 @@
+package drools.rules
+
+import com.makhir.jboss.drools.entity.CreditCard
+
+rule "Offer for VISA"
+	when
+		card: CreditCard(type == "VISA")
+	then
+		card.setDiscount(10);
+	end
+rule "Offer for MASTERCARD"
+	when
+		card: CreditCard(type == "MASTERCARD")
+	then
+		card.setDiscount(15);
+	end
+rule "Offer for RUPAY"
+	when
+		card: CreditCard(type == "RUPAY")
+	then
+		card.setDiscount(20);
+	end
+rule "Offer for UNIONPAY"
+	when
+		card: CreditCard(type == "UNIONPAY")
+	then
+		card.setDiscount(5);
+	end
