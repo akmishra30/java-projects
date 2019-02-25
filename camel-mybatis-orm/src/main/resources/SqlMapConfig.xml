@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+	<!-- Reading external property file -->
+	<properties resource="application.cfg" />
+
+	<settings>
+		<setting name="useGeneratedKeys" value="false" />
+	</settings>
+
+	<!-- Alias name for entity for later use. -->
+	<typeAliases>
+		<typeAlias alias="Customer" type="com.makhir.camel.mybatis.entity.Customer" />
+	</typeAliases>
+	
+	<!-- Environment related configurations like data-source. -->
+
+	<environments default="development">
+		<environment id="development">
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED">
+				<property name="driver" value="${db.driverclass}" />
+				<property name="url" value="${db.url}" />
+				<property name="username" value="${db.username}" />
+                <property name="password" value="${db.password}" />
+			</dataSource>
+		</environment>
+	</environments>
+
+	<!-- entity mapper files -->
+	<mappers>
+		<mapper resource="mybatis/customer-mapper.xml" />
+	</mappers>
+
+</configuration>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camel="http://camel.apache.org/schema/blueprint"
+	xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
+	xsi:schemaLocation="
+			http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.0.0.xsd
+		    http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd 
+            http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
+
+	<bean id="propertyReader" class="com.makhir.camel.postgres.property.PropertyReader" init-method="loadProperties">
+		<property name="location" value="application.cfg"/>
+	</bean>
+	
+	<bean id="propertyRef" factory-ref="propertyReader" factory-method="getProperties" activation="eager"/>
+		
+	<cm:property-placeholder id="ext-properties"
+		persistent-id="camel.blueprint" defaults-ref="propertyRef" placeholder-prefix="$[" placeholder-suffix="]">
+	</cm:property-placeholder>
+	
+	<bean id="dataProcessor" class="com.makhir.camel.postgres.processor.DataProcessor"/>
+	
+	<bean id="dataSource" class="org.postgresql.ds.PGPoolingDataSource"
+		activation="eager">
+		<property name="serverName" value="$[db.serverName]" />
+		<property name="databaseName" value="$[db.databaseName]" />
+		<property name="user" value="$[db.user]" />
+		<property name="password" value="$[db.password]" />
+		<property name="portNumber" value="$[db.portNumber]" />
+	</bean>
+
+	<bean id="sql" class="org.apache.camel.component.sql.SqlComponent">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<camel:camelContext id="camel-postgres-context"
+		streamCache="true" trace="true" useBlueprintPropertyResolver="true"
+		useMDCLogging="true">
+
+		<camel:propertyPlaceholder id="placeholder"
+			cache="true" location="blueprint:ext-properties,classpath:sql-queries.cfg"/>
+
+		<camel:route id="timer-producer-route">
+			<camel:from
+				uri="timer://testtimer?fixedRate=true&amp;period=20s&amp;delay=10" />
+
+			<camel:setBody>
+				<camel:simple>This is simple message at time : ${date:now:yyyy-MM-dd:hh:mm:ss:SSS}</camel:simple>
+			</camel:setBody>
+
+			<camel:to uri="direct:select-customer-route" />
+
+		</camel:route>
+
+		<camel:route id="select-customer-route">
+			<camel:from uri="direct:select-customer-route" />
+
+			<camel:setHeader headerName="id">
+				<camel:constant>1</camel:constant>
+			</camel:setHeader>
+
+			<camel:log message="### Body received....... -- ${body}"
+				loggingLevel="INFO" />
+
+			<camel:to uri="sql:{{sql.select.query}}" />
+
+			<camel:log message="###Received resultSet....... -- ${body}"
+				loggingLevel="INFO" />
+		</camel:route>
+		
+		<camel:route id="simple-data-insertion-route">
+			<camel:from
+				uri="timer://insertionTimer?fixedRate=true&amp;period=5s&amp;delay=5" />
+				
+			<camel:process ref="dataProcessor" />
+			
+			<camel:log message="### Data to be inserted ....... -- ${body}" loggingLevel="INFO" />
+			
+			<camel:to uri="sql:{{sql.insert.query}}" />
+			
+		</camel:route>
+
+	</camel:camelContext>
+
+</blueprint>

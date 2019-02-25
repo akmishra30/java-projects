@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Customer">
+
+	<resultMap id="CustomerResult" type="Customer">
+		<result property="id" column="id" javaType="java.lang.Integer" />
+		<result property="name" column="name" javaType="java.lang.String" />
+		<result property="city" column="city" javaType="java.lang.String" />
+		<result property="address" column="address" javaType="java.lang.String" />
+		<result property="contact" column="contact" javaType="java.lang.String" />
+	</resultMap>
+	
+	<select id="selectAllCustomers" resultMap="CustomerResult" statementType="PREPARED"> <!--  attribute: statementType="PREPARED" -->
+		select c.id, c.name, c.city, c.address, c.contact from customer c order by c.id desc
+	</select>
+	
+	<select id="selectCustomerById" resultMap="CustomerResult" statementType="PREPARED" parameterType="Customer">
+		select * from customer c where c.id=#{id}
+	</select>
+	
+	<insert id="insertCustomer" statementType="PREPARED" parameterType="Customer">
+		insert into customer(
+			id,
+			name,
+			city,
+			address,
+			contact
+		) values(
+			#{id},
+			#{name},
+			#{city},
+			#{address},
+			#{contact}
+		)
+	</insert>
+</mapper>

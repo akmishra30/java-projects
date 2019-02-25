@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camel="http://camel.apache.org/schema/blueprint"
+	xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
+	xsi:schemaLocation="
+			http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.0.0.xsd
+			http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd 
+            http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd 
+            http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd">
+    
+    <bean id="propertyReader" class="com.makhir.camel.mybatis.property.PropertyReader" init-method="loadProperties">
+		<property name="location" value="application.cfg"/>
+	</bean>
+	
+	<bean id="propertyRef" factory-ref="propertyReader" factory-method="getProperties" activation="eager"/>
+	
+	<bean id="dataProcessor" class="com.makhir.camel.mybatis.processor.DataProcessor" />
+		
+	<cm:property-placeholder id="ext-properties"
+		persistent-id="camel.blueprint" defaults-ref="propertyRef" placeholder-prefix="$[" placeholder-suffix="]">
+	</cm:property-placeholder>
+            
+    <camel:camelContext id="camel-mybatis-orm-context"
+		streamCache="true" trace="true" useBlueprintPropertyResolver="true"
+		useMDCLogging="true">
+		
+		<camel:propertyPlaceholder id="placeholder"
+			cache="true" location="blueprint:ext-properties,classpath:sql-queries.cfg"/>
+		
+		<!-- Single Selection -->
+		<camel:route id="mybatis-select-id-route">
+			<camel:from uri="timer://selectSingleTimer?fixedRate=true&amp;period=30s&amp;delay=10" />
+			
+			<camel:log message="### mybatis-select-id-route triggered." loggingLevel="INFO" />
+			
+			<camel:setProperty propertyName="id">
+				<camel:constant>880405</camel:constant>
+			</camel:setProperty>
+			
+			<camel:process ref="dataProcessor" />
+
+			<camel:to uri="mybatis:selectCustomerById?statementType=SelectOne" />
+			
+			<camel:log message="###Received customer ....... -- ${body}" loggingLevel="INFO"/>
+
+		</camel:route>
+
+		<!-- All Selection -->
+		<camel:route id="mybatis-select-all-route">
+			<camel:from uri="timer://selectAllTimer?fixedRate=true&amp;period=5m&amp;delay=10" />
+			
+			<camel:log message="### mybatis-select-all-route received request and started process." loggingLevel="INFO" />
+			
+			<camel:to uri="mybatis:selectAllCustomers?statementType=SelectList"/>
+			
+			<camel:log message="###Received resultSet....... -- ${body}" loggingLevel="INFO"/>
+			
+		</camel:route>
+		
+		<!-- Record Insertion -->
+		<camel:route id="mybatis-insert-record-route">
+			<camel:from uri="timer://insertionTimer?fixedRate=true&amp;period=5s&amp;delay=10" />
+			
+			<camel:log message="### mybatis-insert-record-route received request and started process." loggingLevel="INFO" />
+			
+			<camel:bean ref="dataProcessor" method="createSampleCustomer" />
+			
+			<camel:to uri="mybatis:insertCustomer?statementType=Insert"/>
+			
+			<camel:log message="###Received resultSet....... -- ${body}" loggingLevel="INFO"/>
+			
+		</camel:route>
+
+	</camel:camelContext>
+
+</blueprint>
