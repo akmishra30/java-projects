@@ -1,0 +1,26 @@
+server:
+  port: 9090
+  servlet:
+    context-path: /makhir
+
+spring:
+  jms:
+    cache:
+      session-cache-size: 5
+  activemq:
+    brocker-url: tcp://localhost:61616?jms.redeliveryPolicy.maximumRedeliveries=3
+    user: admin
+    password: admin
+    inMemory: false
+    pool:
+      enabled: true
+      max-connections: 10
+
+logging:
+  level:
+    root: warn
+    com:
+      makhir:
+        springboot:
+          jms: debug
+          
