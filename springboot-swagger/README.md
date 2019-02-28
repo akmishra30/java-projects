@@ -28,6 +28,6 @@ This is sample project with springboot v2.0.5.RELEASE and swagger2 to explain ab
 
 ``http://localhost:9090/makhir/v2/api-docs``
 
-**Swagger UI Screen :- Exposed API with controller.**
+**Swagger UI screen shots.**
 
-![](/screens/ExposedAPIs.png)
+``Please refer /screens/ExposedAPIs.png and /screens/APIModels.png``
