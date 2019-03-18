@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,7 +21,7 @@ import com.makhir.springboot.redis.service.CustomerService;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@RequestMapping(path="/customer")
+@RequestMapping(path="/customer", produces="application/json")
 @RestController
 public class CustomerRestController {
 	
@@ -62,7 +63,11 @@ public class CustomerRestController {
 	
 	@RequestMapping(path="/cache/refresh", method=RequestMethod.DELETE)
 	public ResponseEntity<?> cacheRefresh(){
-		customerService.refreshCustomerCache();
-		return ResponseEntity.ok("Customer cache refreshed successfully.");
+		long total = customerService.refreshCustomerCache();
+		StringBuilder response = new StringBuilder();
+		response.append("{").append("\"total-entity\":").append(total);
+		response.append(",").append("\"message\":").append("\"All the keys removed successfully from Redis cache.\"");
+		response.append("}");
+		return ResponseEntity.ok(response.toString());
 	}
 }

@@ -62,15 +62,18 @@ public class CustomerServiceImpl implements CustomerService {
 		Iterable<Customer> results = redisRepository.findAll();
 		List<Customer> list = new ArrayList<Customer>(2);
 		results.forEach(c ->{
-			list.add(c);
+			if(c != null)
+				list.add(c);
 		});
 		log.info("## Total data in cache: {}", list.size());
 		return list;
 	}
 
 	@Override
-	public void refreshCustomerCache() {
-		log.info("## Total data to be deleted from cache : {}", redisRepository.count());
+	public long refreshCustomerCache() {
+		long count = redisRepository.count();
+		log.info("## Total data to be deleted from cache : {}", count);
 		redisRepository.deleteAll();
+		return count;
 	}
 }

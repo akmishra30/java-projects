@@ -13,7 +13,7 @@ public interface CustomerService {
 	
 	List<Customer> listCustomers();
 	
-	void refreshCustomerCache();
+	long refreshCustomerCache();
 }
 	
 	
