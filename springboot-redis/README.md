@@ -43,6 +43,25 @@ Redis server connection details
 
     URL: http://localhost:6379
 
+**Installing Redis server on Docker**  
+Here, I'm considering that you have already installed the docker on your local server and it's up and running. Now the case is to install Redis service on running Docker. For my case, I'm using MacOS and already installed the docker on my mac.  
+
+The command is to download the redis server and installed it on docker server.
+
+	docker run --name my-redis -p 6379:6379 --restart always --detach redis
+Few more important docker command for your Redis server. 
+
+	$docker —help				# This is for listing all the docker commands
+	$docker container ls			# This is for listing all the running container in docker
+	$docker start <container_name> 		# This is for starting specific container
+	$docker stop <container_name>		# This is for stopping specific container
+	$docker logs --follow my-redis		# This command shows running logs of given container
+	$docker container inspect my-redi	# This command helps to detailed information of the container
+	$docker stats my-redis			# This is command helps to extract the current memory/cpu usage for given container
+	
+	
+	
+	
 **Build project**
 
     mvn clean build install
@@ -77,20 +96,22 @@ Redis server connection details
 		{
 		    "data": [
 		        {
-		            "id": -7207655132083904700,
-		            "name": "XXXXXX",
-		            "gender": "male",
-		            "contact": "22222222",
-		            "email": "abc@test.com"
+		            "id": -3313488897161316244,
+		            "name": "Ashish",
+		            "gender": "Male",
+		            "contact": "3453454546",
+		            "email": "abc@test.com",
+		            "createdTime": "2019-03-23T21:08:28.766"
 		        },
 		        {
-		            "id": -6491198635956757767,
-		            "name": "XXXXXX",
-		            "gender": "male",
-		            "contact": "22222222",
-		            "email": "abc@test.com"
+		            "id": 5755742716097921146,
+		            "name": "Ashish",
+		            "gender": "Male",
+		            "contact": "3453454546",
+		            "email": "abc@test.com",
+		            "createdTime": "2019-03-23T21:08:27.215"
 		        }
-		      ],
+		    ],
 		    "total": 2
 		}
 	

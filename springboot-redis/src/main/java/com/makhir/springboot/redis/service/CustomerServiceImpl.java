@@ -59,12 +59,12 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public List<Customer> listCustomers() {
-		Iterable<Customer> results = redisRepository.findAll();
-		List<Customer> list = new ArrayList<Customer>(2);
-		results.forEach(c ->{
-			if(c != null)
-				list.add(c);
-		});
+		//Iterable<Customer> results = redisRepository.findAll();
+		List<Customer> list = redisRepository.findAll(); //new ArrayList<Customer>(2);
+//		results.forEach(c ->{
+//			if(c != null)
+//				list.add(c);
+//		});
 		log.info("## Total data in cache: {}", list.size());
 		return list;
 	}

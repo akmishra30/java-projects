@@ -1,6 +1,8 @@
 package com.makhir.springboot.redis.entity;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,5 +39,9 @@ public class Customer implements Serializable {
 	
 	@Column(name="EMAIL")
 	private String email;
+	
+	@Column(name="CREATED_TIME")
+	//@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss.SSS")
+	private String createdTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S").format(new Date());
 
 }
