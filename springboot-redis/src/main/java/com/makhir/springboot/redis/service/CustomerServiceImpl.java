@@ -1,6 +1,5 @@
 package com.makhir.springboot.redis.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
